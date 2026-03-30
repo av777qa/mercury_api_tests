@@ -1,0 +1,13 @@
+{
+  "valid": {
+    "name": "Test Segment Alpha",
+    "rules": {}
+  },
+  "missing_app_id": {
+    "name": "Segment Without App"
+  },
+  "update_valid": {
+    "name": "Updated Segment Name",
+    "weight": 10
+  }
+}

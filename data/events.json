@@ -1,0 +1,27 @@
+{
+  "valid": {
+    "event_type": "track",
+    "event_data": {"page": "home", "action": "click"}
+  },
+  "all_event_types": ["create", "receive", "token", "track", "info", "warning", "contacts"],
+  "invalid_event_type": {
+    "event_type": "nonexistent_type",
+    "event_data": {}
+  },
+  "app_rate_valid": {
+    "packageName": "com.test.mercury.app",
+    "reqType": "info",
+    "uniqueAppID": "placeholder_uuid",
+    "infoType": "AppRate",
+    "dscrp": "5"
+  },
+  "batch_valid": {
+    "events": [
+      {"event_name": "test_event_1", "event_data": {"key": "value1"}},
+      {"event_name": "test_event_2", "event_data": {"key": "value2"}}
+    ]
+  },
+  "batch_empty": {
+    "events": []
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "sync_new": {
+    "bundle": "com.test.mercury.app",
+    "platform": "ios",
+    "name": "Mercury Test App",
+    "display_name": "Mercury Test",
+    "description": "Automated test application",
+    "vertical": "testing",
+    "default_timezone": "UTC",
+    "is_active": true
+  },
+  "sync_invalid_no_bundle": {
+    "platform": "ios",
+    "name": "No Bundle App"
+  },
+  "sync_invalid_platform": {
+    "bundle": "com.test.invalid.platform",
+    "platform": "windows",
+    "name": "Bad Platform App"
+  },
+  "update_valid": {
+    "platform": "aos",
+    "display_name": "Updated Mercury Test",
+    "description": "Updated description"
+  }
+}

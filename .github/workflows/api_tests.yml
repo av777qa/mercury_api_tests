@@ -1,0 +1,92 @@
+name: Mercury API Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      markers:
+        description: 'pytest markers (smoke, negative, happy, slow) — порожньо = всі'
+        required: false
+        default: ''
+
+  # Вівторок і п'ятниця о 09:00 UTC (11–12 год Київ)
+  schedule:
+    - cron: '0 9 * * 2'   # Tuesday
+    - cron: '0 9 * * 5'   # Friday
+
+jobs:
+  api-tests:
+    name: Run API Tests on Staging
+    runs-on: ubuntu-latest
+
+    # Секрети підставляються як env-змінні — settings.py читає їх через os.getenv()
+    env:
+      BASE_URL:      ${{ secrets.STAGING_BASE_URL }}
+      TEST_EMAIL:    ${{ secrets.TEST_EMAIL }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # --- Спочатку запускаємо smoke — якщо вони падають, далі не йдемо ---
+      - name: Run smoke tests first
+        run: |
+          pytest tests/ -v \
+            -m "smoke" \
+            --tb=short \
+            --html=reports/smoke_report.html \
+            --self-contained-html
+
+      # --- Повний або вибірковий запуск ---
+      - name: Run full test suite
+        id: run_tests
+        continue-on-error: true
+        run: |
+          MARKERS="${{ github.event.inputs.markers }}"
+          if [ -n "$MARKERS" ]; then
+            pytest tests/ -v \
+              -m "$MARKERS" \
+              --tb=short \
+              --junit-xml=report.xml \
+              --html=reports/full_report.html \
+              --self-contained-html
+          else
+            pytest tests/ -v \
+              -m "not slow" \
+              --tb=short \
+              --junit-xml=report.xml \
+              --html=reports/full_report.html \
+              --self-contained-html
+          fi
+
+      # --- Завантажуємо HTML-звіти як артефакт ---
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-${{ github.run_number }}
+          path: reports/
+          retention-days: 14
+
+      # --- Відправляємо результати в Telegram через n8n ---
+      # Тільки по розкладу або при ручному запуску (не на кожен push/PR)
+      - name: Send report to Telegram via n8n
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        env:
+          N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
+          GITHUB_RUN_URL:  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          TRIGGER_TYPE:    ${{ github.event_name }}
+          MARKER_USED:     ${{ github.event.inputs.markers }}
+        run: python scripts/send_report.py

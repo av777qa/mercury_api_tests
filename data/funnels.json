@@ -1,0 +1,22 @@
+{
+  "valid": {
+    "name": "Test Funnel",
+    "description": "Automated test funnel"
+  },
+  "missing_segment_id": {
+    "name": "Funnel Without Segment"
+  },
+  "update_valid": {
+    "name": "Updated Funnel Name",
+    "is_active": false
+  },
+  "track_clicked": {
+    "action": "clicked"
+  },
+  "track_converted": {
+    "action": "converted"
+  },
+  "track_invalid_action": {
+    "action": "unknown_action"
+  }
+}

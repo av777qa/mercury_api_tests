@@ -1,0 +1,9 @@
+{
+  "valid": {
+    "name": "Test Push Message",
+    "notification": {
+      "title": "Test Notification",
+      "body": "Hello from automated tests!"
+    }
+  }
+}

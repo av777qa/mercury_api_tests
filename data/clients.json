@@ -1,0 +1,28 @@
+{
+  "valid": {
+    "bundle": "com.test.mercury.app",
+    "stream_uid": "placeholder_stream_uid",
+    "push_token": "ExamplePushToken_abcdefghijklmnopqrstuvwxyz_1234567890",
+    "country": "US"
+  },
+  "missing_push_token": {
+    "bundle": "com.test.mercury.app",
+    "stream_uid": "placeholder_stream_uid"
+  },
+  "invalid_country_too_long": {
+    "bundle": "com.test.mercury.app",
+    "stream_uid": "placeholder_stream_uid",
+    "push_token": "ExamplePushToken_abcdefghijklmnopqrstuvwxyz_1234567890",
+    "country": "USA"
+  },
+  "invalid_ip": {
+    "bundle": "com.test.mercury.app",
+    "stream_uid": "placeholder_stream_uid",
+    "push_token": "ExamplePushToken_abcdefghijklmnopqrstuvwxyz_1234567890",
+    "ip": "999.999.999.999"
+  },
+  "update_valid": {
+    "push_token": "UpdatedPushToken_abcdefghijklmnopqrstuvwxyz_9876543210",
+    "country": "DE"
+  }
+}

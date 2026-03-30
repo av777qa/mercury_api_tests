@@ -1,0 +1,21 @@
+{
+  "valid": {
+    "name": "Test Stream Automation",
+    "app_bundle": "com.test.mercury.app",
+    "tags": {"source": "facebook", "type": "paid"}
+  },
+  "sync_new": {
+    "uid": "test-stream-uid-001",
+    "name": "Sync Test Stream",
+    "app_bundle": "com.test.mercury.app",
+    "tags": ["paid", "test"],
+    "is_active": true
+  },
+  "missing_name": {
+    "app_bundle": "com.test.mercury.app"
+  },
+  "update_valid": {
+    "name": "Updated Stream Name",
+    "tags": {"source": "google"}
+  }
+}

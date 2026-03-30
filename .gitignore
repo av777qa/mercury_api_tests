@@ -1,0 +1,22 @@
+# Environment & secrets — НЕ комітити файли з реальними даними!
+.env
+.env.*
+# .env.staging містить паролі → виключений
+# Замість нього використовуй GitHub Secrets у CI/CD
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.python-version
+
+# Reports
+reports/
+*.html
+
+# IDE
+.vscode/
+.idea/
+CICD_SETUP.md
+
