@@ -102,7 +102,7 @@ def build_message(stats: dict, report_url: str, trigger: str, marker: str) -> st
         f"💥 Помилки: {errors}*",
         f"⏭ Пропущені: {skipped}",
         f"⏱ Час: {duration}s",
-        f"🔗 [Відкрити звіт у браузері]({report_url})"
+        f"🔗 [Відкрити звіт в GitHub Actions]({report_url})"
     ]
 
     return "\n".join(lines)
