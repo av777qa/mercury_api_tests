@@ -18,8 +18,6 @@ class TestAuthHappy:
 
     @pytest.mark.happy
     def test_revoke_token(self, fx_auth):
-        """Логінимось окремим клієнтом і видаляємо тільки його токен,
-        щоб не зламати спільний client fixture для решти тестів."""
         temp = ApiClient()
         temp.login(fx_auth["valid"]["email"], fx_auth["valid"]["password"])
         resp = temp.delete("/auth/token")
