@@ -17,8 +17,12 @@ class TestAuthHappy:
         assert "user" in data, f"Expected 'user' in data, got: {list(data.keys())}"
 
     @pytest.mark.happy
-    def test_revoke_token(self,fx_auth):
-        resp = fx_auth.delete("/auth/token")
+    def test_revoke_token(self, fx_auth):
+        """Логінимось окремим клієнтом і видаляємо тільки його токен,
+        щоб не зламати спільний client fixture для решти тестів."""
+        temp = ApiClient()
+        temp.login(fx_auth["valid"]["email"], fx_auth["valid"]["password"])
+        resp = temp.delete("/auth/token")
         assert resp.status_code == 200
         assert "message" in resp.json()
 

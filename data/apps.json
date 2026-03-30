@@ -19,7 +19,6 @@
     "name": "Bad Platform App"
   },
   "update_valid": {
-    "platform": "aos",
     "display_name": "Updated Mercury Test",
     "description": "Updated description"
   }
