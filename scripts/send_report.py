@@ -98,7 +98,7 @@ def build_message(stats: dict, report_url: str, trigger: str, marker: str) -> st
         f"Помилки: {errors}",
         f"⏭ Пропущені: {skipped}",
         f"⏱ Час: {duration}s",
-        f"🔗 [Відкрити звіт в GitHub Actions]({report_url})"
+        f"🔗 [Скачати звіт (ZIP)]({report_url})"
     ]
 
     return "\n".join(lines)
@@ -137,8 +137,14 @@ def main():
         print("[send_report] N8N_WEBHOOK_URL не задано — пропускаємо відправку.")
         sys.exit(0)
 
-    # Отримуємо URL звіту (пріоритет на REPORT_URL з GitHub Pages)
-    report_url = os.environ.get("REPORT_URL") or os.environ.get("GITHUB_RUN_URL", "https://github.com")
+    github_run_url = os.environ.get("GITHUB_RUN_URL", "https://github.com")
+    artifact_id    = os.environ.get("ARTIFACT_ID")
+
+    if artifact_id:
+        report_url = f"{github_run_url}/artifacts/{artifact_id}"
+    else:
+        report_url = github_run_url
+
     trigger    = os.environ.get("TRIGGER_TYPE", "workflow_dispatch")
     marker     = os.environ.get("MARKER_USED", "").strip()
 
