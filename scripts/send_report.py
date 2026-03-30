@@ -81,25 +81,21 @@ def build_message(stats: dict, report_url: str, trigger: str, marker: str) -> st
     skipped = stats["skipped"]
     duration = stats["duration"]
 
-    overall_ok = (failed == 0 and errors == 0 and total > 0)
-    status_text = "PASSED" if overall_ok else "FAILED"
-
     now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     trigger_label = "⏰ За розкладом" if trigger == "schedule" else "🖐 Ручний запуск"
     marker_label  = f" ({marker})" if marker else " (всі тести)"
 
-    # Точний формат за запитом користувача:
-    # Примітка: Markdown-зірочки навколо блоку Результати
+    # Точний формат за новим запитом (спрощений заголовок, без іконок на результатах)
     lines = [
-        f"Mercury API Tests — {status_text}",
+        "Mercury API Tests",
         f"📅 {now_utc}",
         f"🚀 {trigger_label}{marker_label}",
-        f"📊 *Результати:",
+        "Результати:",
         f"Всього: {total}",
         f"✅ Пройшли: {passed}",
         f"❌ Впали: {failed}",
-        f"💥 Помилки: {errors}*",
+        f"Помилки: {errors}",
         f"⏭ Пропущені: {skipped}",
         f"⏱ Час: {duration}s",
         f"🔗 [Відкрити звіт в GitHub Actions]({report_url})"
