@@ -23,7 +23,7 @@ jobs:
 
     # Секрети підставляються як env-змінні — settings.py читає їх через os.getenv()
     env:
-      BASE_URL:      ${{ secrets.STAGING_BASE_URL }}
+      BASE_URL:      ${{ secrets.BASE_URL }}
       TEST_EMAIL:    ${{ secrets.TEST_EMAIL }}
       TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
 
