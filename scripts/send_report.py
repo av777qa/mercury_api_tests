@@ -73,7 +73,7 @@ def parse_junit(path: str) -> dict:
 # Формування Telegram-повідомлення (Markdown)
 # ---------------------------------------------------------------------------
 
-def build_message(stats: dict, run_url: str, trigger: str, marker: str) -> str:
+def build_message(stats: dict, report_url: str, trigger: str, marker: str) -> str:
     total   = stats["total"]
     passed  = stats["passed"]
     failed  = stats["failed"]
@@ -82,37 +82,28 @@ def build_message(stats: dict, run_url: str, trigger: str, marker: str) -> str:
     duration = stats["duration"]
 
     overall_ok = (failed == 0 and errors == 0 and total > 0)
-    status_icon = "✅" if overall_ok else "❌"
     status_text = "PASSED" if overall_ok else "FAILED"
 
     now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     trigger_label = "⏰ За розкладом" if trigger == "schedule" else "🖐 Ручний запуск"
-    marker_label  = f" `{marker}`" if marker else " (всі тести)"
+    marker_label  = f" ({marker})" if marker else " (всі тести)"
 
+    # Точний формат за запитом користувача:
+    # Примітка: Markdown-зірочки навколо блоку Результати
     lines = [
-        f"{status_icon} *Mercury API Tests — {status_text}*",
-        "",
+        f"Mercury API Tests — {status_text}",
         f"📅 {now_utc}",
         f"🚀 {trigger_label}{marker_label}",
-        "",
-        f"📊 *Результати:*",
-        f"  • Всього: *{total}*",
-        f"  • ✅ Пройшли: *{passed}*",
-        f"  • ❌ Впали: *{failed}*",
-        f"  • 💥 Помилки: *{errors}*",
-        f"  • ⏭ Пропущені: *{skipped}*",
-        f"  • ⏱ Час: *{duration}s*",
+        f"📊 *Результати:",
+        f"Всього: {total}",
+        f"✅ Пройшли: {passed}",
+        f"❌ Впали: {failed}",
+        f"💥 Помилки: {errors}*",
+        f"⏭ Пропущені: {skipped}",
+        f"⏱ Час: {duration}s",
+        f"🔗 [Відкрити звіт у браузері]({report_url})"
     ]
-
-    if stats["failed_tests"]:
-        lines.append("")
-        lines.append("🔴 *Тести що впали:*")
-        for t in stats["failed_tests"]:
-            lines.append(f"  • `{t}`")
-
-    lines.append("")
-    lines.append(f"[🔗 Відкрити звіт в GitHub Actions]({run_url})")
 
     return "\n".join(lines)
 
@@ -150,12 +141,13 @@ def main():
         print("[send_report] N8N_WEBHOOK_URL не задано — пропускаємо відправку.")
         sys.exit(0)
 
-    run_url  = os.environ.get("GITHUB_RUN_URL", "https://github.com")
-    trigger  = os.environ.get("TRIGGER_TYPE", "workflow_dispatch")
-    marker   = os.environ.get("MARKER_USED", "").strip()
+    # Отримуємо URL звіту (пріоритет на REPORT_URL з GitHub Pages)
+    report_url = os.environ.get("REPORT_URL") or os.environ.get("GITHUB_RUN_URL", "https://github.com")
+    trigger    = os.environ.get("TRIGGER_TYPE", "workflow_dispatch")
+    marker     = os.environ.get("MARKER_USED", "").strip()
 
     stats   = parse_junit("report.xml")
-    message = build_message(stats, run_url, trigger, marker)
+    message = build_message(stats, report_url, trigger, marker)
 
     payload = {
         # Головне поле — готовий текст для Telegram (Markdown)
@@ -169,7 +161,7 @@ def main():
         "skipped":  stats["skipped"],
         "duration": stats["duration"],
         "status":   "passed" if (stats["failed"] == 0 and stats["errors"] == 0 and stats["total"] > 0) else "failed",
-        "run_url":  run_url,
+        "report_url": report_url,
         "trigger":  trigger,
         "marker":   marker,
     }

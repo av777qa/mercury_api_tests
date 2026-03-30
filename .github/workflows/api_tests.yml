@@ -1,5 +1,8 @@
 name: Mercury API Tests
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [main, develop]
@@ -67,9 +70,18 @@ jobs:
               -m "not slow" \
               --tb=short \
               --junit-xml=report.xml \
-              --html=reports/full_report.html \
+              --html=reports/report.html \
               --self-contained-html
           fi
+
+      # --- Деплой в GitHub Pages ---
+      - name: Deploy Report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./reports
+          publish_branch: gh-pages
 
       # --- Завантажуємо HTML-звіти як артефакт ---
       - name: Upload test reports
@@ -87,6 +99,7 @@ jobs:
         env:
           N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
           GITHUB_RUN_URL:  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REPORT_URL:      "https://av777qa.github.io/mercury_api_tests/report.html"
           TRIGGER_TYPE:    ${{ github.event_name }}
           MARKER_USED:     ${{ github.event.inputs.markers }}
         run: python scripts/send_report.py
